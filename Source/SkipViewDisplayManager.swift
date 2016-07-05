@@ -77,9 +77,9 @@ internal class SkipViewDisplayManager {
             self.skipViewConstraints = validLayoutConstraints
             self.instructionsTopView.addConstraints(self.skipViewConstraints)
         } else {
-            self.skipViewConstraints.append(NSLayoutConstraint(item: self.skipView, attribute: .Trailing, relatedBy: .Equal, toItem: self.instructionsTopView, attribute: .Trailing, multiplier: 1, constant: -2))
+            self.skipViewConstraints.append(NSLayoutConstraint(item: self.skipView, attribute: .CenterX, relatedBy: .Equal, toItem: self.instructionsTopView, attribute: .CenterX, multiplier: 1, constant: 0))
 
-            self.skipViewConstraints.append(NSLayoutConstraint(item: self.skipView, attribute: .Top, relatedBy: .Equal, toItem: self.instructionsTopView, attribute: .Top, multiplier: 1, constant: 22))
+            self.skipViewConstraints.append(NSLayoutConstraint(item: self.skipView, attribute: .Bottom, relatedBy: .Equal, toItem: self.instructionsTopView, attribute: .Bottom, multiplier: 1, constant: -22))
 
             self.instructionsTopView.addConstraints(self.skipViewConstraints)
         }
