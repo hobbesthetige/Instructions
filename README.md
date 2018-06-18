@@ -1,40 +1,53 @@
-# ![Instructions](http://i.imgur.com/2Wy44G6.png)
+# ![Instructions](http://i.imgur.com/K51lqvW.png)
 
-[![Travis build status](https://img.shields.io/travis/ephread/Instructions.svg)](https://travis-ci.org/ephread/Instructions) [![CocoaPods Shield](https://img.shields.io/cocoapods/v/Instructions.svg)](https://cocoapods.org/pods/Instructions) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) [![Join the chat at https://gitter.im/ephread/Instructions](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ephread/Instructions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Travis build status](https://img.shields.io/travis/ephread/Instructions.svg)](https://travis-ci.org/ephread/Instructions) [![codebeat badge](https://codebeat.co/badges/7bbb17b5-2cde-4108-aac0-eefcd439cf9f)](https://codebeat.co/projects/github-com-ephread-instructions) [![codecov](https://codecov.io/gh/ephread/Instructions/branch/master/graph/badge.svg)](https://codecov.io/gh/ephread/Instructions) [![CocoaPods Shield](https://img.shields.io/cocoapods/v/Instructions.svg)](https://cocoapods.org/pods/Instructions) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) [![Join the chat at https://gitter.im/ephread/Instructions](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ephread/Instructions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Add customizable coach marks into you iOS project. Instructions will makes your life easier, I promise. Available for both iPhone and iPad.
+Add customizable coach marks into your iOS project. Available for both iPhone and iPad.
+
+# Table of contents
+
+  * [Overview](#overview)
+  * [Features](#features)
+  * [Requirements](#requirements)
+  * [Asking Questions / Contributing](#asking-questions--contributing)
+      * [Asking Questions](#asking-questions)
+      * [Contributing](#contributing)
+  * [Installation](#installation)
+      * [CocoaPods](#cocoapods)
+      * [Carthage](#carthage)
+      * [Manually](#manually)
+  * [Usage](#usage)
+      * [Getting Started](#getting-started)
+      * [Advanced Usage](#advanced-usage)
+  * [Usage within App Extensions](#instructions-within-app-extensions)
+  * [License](#license)
 
 ## Overview
 ![Instructions Demo](http://i.imgur.com/JUlQH9F.gif)
 
-⚠️ **Until Instructions reaches 1.0.0, the API is subject to change. Please see the Features section for more information about the roadmap.**
-
 ## Features
-- [x] Customizable views
-- [x] Customizable positions
-- [x] Customizable highlight system
-- [x] Skipable tour
-- [x] Full right-to-left support
+- [x] [Customizable highlight system](#advanced-usage)
+- [x] [Customizable views](#providing-custom-views)
+- [x] [Customizable positions](#customizing-how-the-coach-mark-will-show)
+- [x] [Skipable tour](#let-users-skip-the-tour)
+- [x] [Pilotable from code](#piloting-the-flow-from-the-code)
+- [x] [App Extensions support](#usage-within-app-extensions)
+- [x] [Animatable coach marks](#animating-coach-marks)
+- [x] Right-to-left support
 - [x] Size transition support (orientation and multi-tasking)
-- [x] Skipable tour
-- [x] Pilotable from code
+- [x] Partial `UIVisualEffectView` support
 - [ ] Cross controllers walkthrough
-- [ ] Good test coverage • **Once done, it should bump version to 1.0.0**
-- [ ] Full support of UIVisualEffectView blur in overlay
-- [ ] Objective-C bridging
-- [ ] Coach marks animation
+- [ ] Multiple coach marks support
 
 ## Requirements
-- Xcode 7 / Swift 2
-- iOS 8.0+
+- Xcode 9 / Swift 4+
+- iOS 10.0+
 
 ## Asking Questions / Contributing
 
 ### Asking questions
 
-If you need help with something in particular, ask a question on [Stack Overflow](https://stackoverflow.com) with the tag `instructions-swift` (make sure the question hasn't already been asked and answered).
-
-If you have other questions, use the [Gitter room](https://gitter.im/ephread/Instructions).
+If you need help with something in particular, ask a question in the [Gitter room](https://gitter.im/ephread/Instructions).
 
 ### Contributing
 
@@ -53,10 +66,10 @@ Add Instructions to your Podfile:
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '8.0'
+platform :ios, '10.0'
 use_frameworks!
 
-pod 'Instructions', '~> 0.4'
+pod 'Instructions', '~> 1.2.0'
 ```
 
 Then, run the following command:
@@ -69,7 +82,7 @@ $ pod install
 Add Instructions to your Cartfile:
 
 ```
-github "ephread/Instructions" ~> 0.4
+github "ephread/Instructions" ~> 1.2.0
 ```
 
 You can then update, build and drag the generated framework into your project:
@@ -91,15 +104,15 @@ If you rather stay away from both CocoaPods and Carthage, you can also install I
 ## Usage
 
 ### Getting started
-Open up the controller for which you wish to display coach marks and instanciate a new `CoachMarksViewController`. You should also provide a `dataSource`, which is an object conforming to the `CoachMarksControllerDataSource` protocol.
+Open up the controller for which you wish to display coach marks and instantiate a new `CoachMarksController`. You should also provide a `dataSource`, which is an object conforming to the `CoachMarksControllerDataSource` protocol.
 
 ```swift
 class DefaultViewController: UIViewController, CoachMarksControllerDataSource, CoachMarksControllerDelegate {
     let coachMarksController = CoachMarksController()
-	 
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.coachMarksController.dataSource = self
     }
 }
@@ -108,23 +121,22 @@ class DefaultViewController: UIViewController, CoachMarksControllerDataSource, C
 #### Data Source
 `CoachMarksControllerDataSource` declares three mandatory methods.
 
-The first one asks for the number of coach marks to display. Let's pretend that you want to display only one coach mark. Note that the `CoachMarksController` requesting the information is supplied, allowing you to supply data for mutiple `CoachMarksController`, within a single dataSource.
+The first one asks for the number of coach marks to display. Let's pretend that you want to display only one coach mark. Note that the `CoachMarksController` requesting the information is supplied, allowing you to supply data for multiple `CoachMarksController`, within a single dataSource.
 
 ```swift
-func numberOfCoachMarksForCoachMarksController(coachMarkController: CoachMarksController)
--> Int {
+func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
     return 1
 }
 ```
 
-The second one asks for metadata. This allows you to customize how a coach mark will position and appear, but won't let you define its look (more on this later). Metadata are packaged in a struct named `CoachMark`. Note the parameter `coachMarksForIndex`, it gives you the coach mark logical position, much like and `IndexPath` would do. `coachMarksController` provides you with an easy way to create a default `CoachMark` object, from a given view.
+The second one asks for metadata. This allows you to customize how a coach mark will position and appear, but won't let you define its look (more on this later). Metadata are packaged in a struct named `CoachMark`. Note the parameter `coachMarkAt`, it gives you the coach mark logical position, much like and `IndexPath` would do. `coachMarksController` provides you with an easy way to create a default `CoachMark` object, from a given view.
 
 ```swift
 let pointOfInterest = UIView()
 
-func coachMarksController(coachMarksController: CoachMarksController, coachMarksForIndex: Int)
--> CoachMark {
-    return coachMarksController.coachMarkForView(self.pointOfInterest)
+func coachMarksController(_ coachMarksController: CoachMarksController,
+                              coachMarkAt index: Int) -> CoachMark {
+    return coachMarksController.helper.makeCoachMark(for: pointOfInterest)
 }
 ```
 
@@ -133,9 +145,8 @@ The third one supplies two views (much like `cellForRowAtIndexPath`) in the form
 But for now, lets just return the default views provided by Instructions.
 
 ```swift
-func coachMarksController(coachMarksController: CoachMarksController, coachMarkViewsForIndex: Int, coachMark: CoachMark)
--> (bodyView: CoachMarkBodyView, arrowView: CoachMarkArrowView?) {
-    let coachViews = coachMarksController.defaultCoachViewsWithArrow(true, arrowOrientation: coachMark.arrowOrientation)
+func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: CoachMarkBodyView, arrowView: CoachMarkArrowView?) {
+    let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
 
     coachViews.bodyView.hintLabel.text = "Hello! I'm a Coach Mark!"
     coachViews.bodyView.nextLabel.text = "Ok!"
@@ -145,13 +156,24 @@ func coachMarksController(coachMarksController: CoachMarksController, coachMarkV
 ```
 
 #### Starting the coach marks flow
-Once the `dataSource` is set up, you can start displaying the coach marks. You will most likely supply `self` to `startOn`. While the overlay adds itself as a child of the current window (to be on top of everything), the `CoachMarksController` will add itself as a child of the view controller you provide. That way, the `CoachMarksController` will receive size change events and react accordingly. Be careful, you can't call `startOn` in the `viewDidLoad` method, since the view hierarchy has to be set up and ready for Instructions to work properly.
+Once the `dataSource` is set up, you can start displaying the coach marks. You will most likely supply `self` to `start`. While the overlay adds itself as a child of the current window (to be on top of everything), the `CoachMarksController` will add itself as a child of the view controller you provide. That way, the `CoachMarksController` will receive size change events and react accordingly. Be careful, you can't call `start` in the `viewDidLoad` method, since the view hierarchy has to be set up and ready for Instructions to work properly.
 
 ```swift
 override func viewDidAppear(animated: Bool) {
     super.viewDidAppear(animated)
 
-    self.coachMarksController.startOn(self)
+    self.coachMarksController.start(on: self)
+}
+```
+
+#### Stopping the coach marks flow
+You should always stop the flow, once the view disappear. To avoid animation artefacts and timing issues, don't forget to add the following code to your `viewWillDisappear` method. Calling `stop(immediately: true)` will ensure that the flow is stopped immediately upon the disappearance of the view.
+
+```swift
+override func viewWillDisappear(animated: Bool) {
+    super.viewWillDisappear(animated)
+
+    self.coachMarksController.stop(immediately: true)
 }
 ```
 
@@ -162,24 +184,34 @@ You're all set. For more examples you can check the `Examples/` directory provid
 #### Customizing general properties
 You can customized the background color of the overlay using this property:
 
-- `overlayBackgroundColor`
+- `overlay.color`
 
-You can also make the overlay blur the content sitting behind it. Setting this property to anything else than `nil` will disable the `overlayBackgroundColor`:
+You can also make the overlay blur the content sitting behind it. Setting this property to anything else than `nil` will disable the `overlay.color`:
 
-- `overlayBlurEffectStyle: UIBlurEffectStyle?`
+- `overlay.blurEffectStyle: UIBlurEffectStyle?`
+
+The overlay can sit over the status bar or under, the property defaults to `true`:
+
+- `overlay.isShownAboveStatusBar: Bool`
+
+The window level at which show the overlay and the coach mark, by default, the property holds `UIWindowLevelNormal + 1`.
+
+- `overlay.windowLevel: UIWindowLevel`
 
 Last, you can make the overlay tappable. A tap on the overlay will hide the current coach mark and display the next one.
 
-- `allowOverlayTap: Bool`
+- `overlay.allowTap: Bool`
+
+⚠️ When using a blur effect, setting the window level to anything above `UIWindowLevelStatusBar` is not supported. Additionally, the blurring overlay is not supported in app extensions.
 
 #### Providing a custom cutout path
-If you dislike how the default cutout path looks like, you can customize it by providing a block to `coachMarkForView`. The cutout path will automatically be stored in the `cutoutPath` property of the returning `CoachMark` object:
+If you dislike how the default cutout path looks like, you can customize it by providing a block to `makeCoachMark(for:)`. The cutout path will automatically be stored in the `cutoutPath` property of the returning `CoachMark` object:
 
 ```swift
-var coachMark = coachMarksController.coachMarkForView(customView) {
+var coachMark = coachMarksController.helper.makeCoachMark(for: customView) {
 (frame: CGRect) -> UIBezierPath in
     // This will create an oval cutout a bit larger than the view.
-    return UIBezierPath(ovalInRect: CGRectInset(frame, -4, -4))
+    return UIBezierPath(ovalIn: frame.insetBy(dx: -4, dy: -4))
 }
 ```
 
@@ -211,8 +243,8 @@ override var highlighted: Bool {
 Remember the following method, from the dataSource?
 
 ```swift
-func coachMarksController(coachMarkController: CoachMarksController, coachMarkViewsForIndex: Int, coachMark: CoachMark) {
-	let coachViews = coachMarksController.defaultCoachViewsWithArrow(true, arrowOrientation: coachMark.arrowOrientation)
+func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: CoachMarkBodyView, arrowView: CoachMarkArrowView?) {
+	let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
 }
 ```
 
@@ -223,7 +255,7 @@ Browse the `Example/` directory for more details.
 #### Customizing how the coach mark will show
 You can customize the following properties:
 
-- `animationDuration: NSTimeInterval`: the time it will take for a coach mark to appear or disappear on the screen.
+- `animationDuration: TimeInterval`: the time it will take for a coach mark to appear or disappear on the screen.
 
 - `gapBetweenBodyAndArrow: CGFloat`: the vertical gap between the _body_ and the _arrow_ in a given coach mark.
 
@@ -237,13 +269,45 @@ You can customize the following properties:
 
 - `arrowOrientation: CoachMarkArrowOrientation?` is the orientation of the arrow (not the coach mark, meaning setting this property to `.Top` will display the coach mark below the point of interest). Although it's usually pre-computed by the library, you can override it in `coachMarksForIndex:` or in `coachMarkWillShow:`.
 
+- `displayOverCutoutPath: Bool` enables the coach mark to be displayed over the cutout path; please note that arrows won't be visible if you set this property to `true`
+
 - `disableOverlayTap: Bool` is used to disable the ability to tap on the overlay to show the next coach mark, on a case-by-case basis.
 
 - `allowTouchInsideCutoutPath: Bool` is used to allow touch forwarding inside the cutout path. Take a look at `TransitionFromCodeViewController`, in the `Example/` directory, for more information.
 
+#### Animating coach marks
+To animates coach marks, you will need to implement the `CoachMarksControllerAnimationDelegate` protocol.
+
+```swift
+func coachMarksController(_ coachMarksController: CoachMarksController, fetchAppearanceTransitionOfCoachMark coachMarkView: UIView, at index: Int, using manager: CoachMarkTransitionManager)
+
+func coachMarksController(_ coachMarksController: CoachMarksController, fetchDisappearanceTransitionOfCoachMark coachMarkView: UIView, at index: Int, using manager: CoachMarkTransitionManager)
+
+func coachMarksController(_ coachMarksController: CoachMarksController, fetchIdleAnimationOfCoachMark coachMarkView: UIView, at index: Int, using manager: CoachMarkAnimationManager)
+```
+
+All methods from this delegate work in similar ways. First, you will need to specify the general parameters of the animation via `manager.parameters` properties. These properties match the configuration parameters that you can provide to `UIView.animate`.
+
+- `duration: TimeInterval`: the total duration of the animation.
+
+- `delay: TimeInterval`: the amount of time to wai before beginning the animations
+
+- `options: UIViewAnimationOptions`: a mask of options indicating how you want to perform the animations (for regular animations).
+
+- `keyframeOptions: UIViewKeyframeAnimationOptions`: a mask of options indicating how you want to perform the animations (for keyframe animations).
+
+Once you've set the parameters, you should provide your animations by calling `manager.animate`. The method signature is different wether you are animating the idle state of coach marks, or making them appear/disappear.
+
+You should provide your animations in a block passed to the `animate` parameter, in a similar fashion to `UIView.animate`. If you need to access the animation parameters or the coach mark metadata, a `CoachMarkAnimationManagementContext` containing these will be provided to your animation block. You shouldn't capture a reference to manager from the animation block.
+
+For an implemntation example, you can also take a look a the `DelegateViewController` class found in the `Example` directory.
+
+##### Appearance and disappearance specifics
+If you need to define an initial state, you should do so by providing a block to the `fromInitialState` property. While directly setting values on `coachMarkView` in the method before calling `manager.animate()` might work, it's not garanteed to.
+
 #### Let users skip the tour
 ##### Control
-You can provide the user with a mean to skip the coach marks. First, you will need to set 
+You can provide the user with a mean to skip the coach marks. First, you will need to set
 `skipView` with a `UIView` conforming to the `CoachMarkSkipView` protocol. This protocol defines a single property:
 
 ```swift
@@ -260,7 +324,7 @@ As usual, Instructions provides a default implementation of `CoachMarkSkipView` 
 To define how the view will position itself, you can use a method from the `CoachMarkControllerDataSource` protocol. This method is optional.
 
 ```swift
-func coachMarksController(coachMarksController: CoachMarksController, constraintsForSkipView skipView: UIView, inParentView parentView: UIView) -> [NSLayoutConstraint]?
+func coachMarksController(_ coachMarksController: CoachMarksController, constraintsForSkipView skipView: UIView, inParent parentView: UIView) -> [NSLayoutConstraint]?
 ```
 
 This method will be called by the `CoachMarksController` before starting the tour and whenever there is a size change. It gives you the _skip button_ and the view in which it will be positioned and expects an array of `NSLayoutConstraints` in return. These constraints will define how the _skip button_ will be positioned in its parent. You should not add the constraints yourself, just return them.
@@ -270,7 +334,7 @@ Returning `nil` will tell the `CoachMarksController` to use the defaults constra
 For more information about the skip mechanism, you can check the `Example/` directory.
 
 #### Piloting the flow from the code
-Should you ever need to programmatically show the coach mark, `CoachMarkController` also provides the following method:
+Should you ever need to programmatically show the coach mark, `CoachMarkController.flow` also provides the following method:
 
 ```swift
 func showNext(numberOfCoachMarksToSkip numberToSkip: Int = 0)
@@ -281,24 +345,40 @@ You can specify a number of coach marks to skip (effectively jumping to a furthe
 Take a look at `TransitionFromCodeViewController`, in the `Example/` directory, to get an idea of how you can leverage this method, in order to ask the user to perform certain actions.
 
 #### Using a delegate
-The `CoachMarkController` will notify the delegate on three occasions. All those methods are optionals.
+The `CoachMarkController` will notify the delegate on multiple occasions. All those methods are optionals.
 
 First, when a coach mark will show. You might want to change something about the view. For that reason, the `CoachMark` metadata structure is passed as an `inout` object, so you can update it with new parameters.
 
 ```swift
-func coachMarksController(coachMarksController: CoachMarksController, inout coachMarkWillShow: CoachMark, forIndex: Int)
+func coachMarksController(_ coachMarksController: CoachMarksController, willShow coachMark: inout CoachMark, at index: Int)
 ```
 
 Second, when a coach mark disappears.
 
 ```swift    
-func coachMarksController(coachMarksController: CoachMarksController, coachMarkWillDisappear: CoachMark, forIndex: Int)
+func coachMarksController(_ coachMarksController: CoachMarksController, willHide coachMark: CoachMark, at index: Int)
 ```
-Third, when all coach marks have been displayed. 
+
+Third, when all coach marks have been displayed. `didEndShowingBySkipping` specify whether the flow completed because the user requested it to end.
 
 ```swift    
-func didFinishShowingFromCoachMarksController(coachMarksController: CoachMarksController)
+func coachMarksController(_ coachMarksController: CoachMarksController, didEndShowingBySkipping skipped: Bool)
 ```
+
+##### React when the user tap the overlay #####
+
+Whenever the user will tap the overlay, you will get notified through:
+
+```swift    
+func shouldHandleOverlayTap(in coachMarksController: CoachMarksController, at index: Int) -> Bool
+```
+
+Returning `true` will let Instructions continue the flow normally, while returning `false` will interrupt it. If you choose to interrupt the flow, you're responsible for either stopping or pausing it or manually show the next coach marks (see [Piloting the flow from the code](#piloting-the-flow-from-the-code)).
+
+`index` is the index of the coach mark currently displayed.
+
+##### Pausing and resuming the flow
+It's as simple as calling `coachMarksController.flow.pause()` and `coachMarksController.flow.resume()`. While pausing, you can also choose to hide Instructions's overlay altogether (`.pause(and: hideInstructions)`), or only hide the overlay and retain its touch blocking capabilities (`.pause(and: hideOverlay)`).
 
 ##### Performing animations before showing coach marks #####
 You can perform animation on views, before or after showing a given coach mark.
@@ -309,9 +389,9 @@ You'll implement some logic into the `coachMarkWillShow` delegate method.
 To ensure you don't have to hack something up and turn asynchronous animation blocks into synchronous ones, you can pause the flow, perform the animation and then start the flow again. This will ensure your UI never get stalled.
 
 ```swift
-func coachMarksController(coachMarksController: CoachMarksController, inout coachMarkWillShow: CoachMark, forIndex: Int) {
+func coachMarksController(_ coachMarksController: CoachMarksController, willShow coachMark: inout CoachMark, at index: Int) {
 	 // Pause to be able to play the animation and then show the coach mark.
-    coachMarksController.pause()
+    coachMarksController.flow.pause()
 
     // Run the animation
     UIView.animateWithDuration(1, animations: { () -> Void in
@@ -321,21 +401,126 @@ func coachMarksController(coachMarksController: CoachMarksController, inout coac
         // and start the display again. Since inout parameters cannot be
         // captured by the closure, you can use the following method to update
         // the coachmark. It will only work if you paused the flow.
-        coachMarksController.updateCurrentCoachMarkForView(myView)
-        coachMarksController.resume()
+        coachMarksController.helper.updateCurrentCoachMarkForView(myView)
+        coachMarksController.flow.resume()
     })
 }
 ```
+
+⚠️ Since the blurring overlay snapshots the view during coach mark appearance/disappearance,
+you should make sure that animations targeting your own view don't occur while a coach mark
+is appearing or disappearing. Otherwise, the animation won't be visible.
+
+You may also want to customize the properties defining the of for the classic transparency overlay, as Instructions will fall back to using the classic type if `UIAccessibilityIsReduceTransparencyEnabled()` returns true.
 
 ##### Skipping a coach mark
 
 You can skip a given coach mark by implementing the following method defined in `CoachMarksControllerDelegate`:
 
 ```swift
-func coachMarksController(coachMarksController: CoachMarksController, coachMarkWillLoadForIndex index: Int) -> Bool
+func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkWillLoadAt index: Int) -> Bool
 ```
 
-`coachMarkWillLoadForIndex:` is called right before a given coach mark will show. To prevent a CoachMark from showing, you can return `false` from this method.
+`coachMarkWillLoadAt:` is called right before a given coach mark will show. To prevent a CoachMark from showing, you can return `false` from this method.
+
+##### Customizing ornaments of the overlay
+
+It's possible to add custom views which will be displayed over the overlay by implementing the following method of `CoachMarksControllerDelegate`:
+
+```swift
+func coachMarksController(_ coachMarksController: CoachMarksController,
+                          configureOrnamentsOfOverlay overlay: UIView)
+```
+
+Just add the ornaments to the provided view (`overlay`) and Instructions should take care of the rest. Please note, however, that these ornaments will be displayed over the cutout, but under the coach marks.
+
+#### Dealing with frame changes
+
+Since Instructions doesn't hold any reference to the _views of interest_, it cannot respond to their
+change of frame automatically.
+
+Instructions provide two methods to deal with frame changes.
+
+- `CoachMarkController.prepareForChange()`, called before a change of frame, to hide
+  the coach mark and the cutout path.
+- `CoachMarkController.restoreAfterChangeDidComplete()`, called after a change of frame
+  to show the coach mark and the cutout again.
+
+Although you can call these methods at any time while Instructions is idle, the result will not
+look smooth if the coach mark is already displayed. It's make the changes occur between
+two coach marks, by pausing and resuming the flow. [`KeyboardViewController`] shows an
+example of this technique.
+
+[`KeyboardViewController`]: https://github.com/ephread/Instructions/blob/master/Examples/Example/KeyboardViewController.swift
+
+### Usage within App Extensions
+If you wish to add Instructions within App Extensions, there's additional work you need to perform.
+An example is available in the `App Extensions Example/` directory.
+
+#### Dependencies
+Instructions comes with two shared schemes, `Instructions` and `InstructionsAppExtensions`. The only differences between the two is that `InstructionsAppExtensions` does not depend upon the `UIApplication.sharedApplication()`, making it suitable for App Extensions.
+
+In the following examples, let's consider a project with two targets, one for a regular application (`Instructions App Extensions Example`) and another for an app extension (`Keyboard Extension`).
+
+#### CocoaPods
+
+If you're importing Instructions with CocoaPods, you'll need to edit your `Podfile` to make it look
+like this:
+
+```ruby
+target 'Instructions App Extensions Example' do
+  pod 'Instructions', '~> 1.0.0'
+end
+
+target 'Keyboard Extension' do
+  pod 'InstructionsAppExtensions', '~> 1.0.0'
+end
+```
+
+If Instructions is only imported from within App Extension target, you don't need the first block.
+
+When compiling either targets, CocoaPods will make sure the appropriate flags are set, thus
+allowing/forbidding calls to `UIApplication.sharedApplication()`.
+You don't need to change your code.
+
+#### Frameworks (Carthage / Manual management)
+
+If you're importing Instructions through frameworks, you'll notice that the two shared schemes
+(`Instructions` and `InstructionsAppExtensions`) both result in different frameworks.
+
+You need to embed both frameworks and link them to the proper targets.
+Make sure they look like theses:
+
+**Instructions App Extensions Example**
+![Imgur](http://i.imgur.com/3M3BQaO.png)
+
+**Keyboard Extension**
+![Imgur](http://i.imgur.com/LAtV0oA.png)
+
+If you plan to add Instructions only to the App Extension target, you don't need to add `Instructions.frameworks`.
+
+##### Import statements
+
+When importing Instructions from files within `Instructions App Extensions Example`,
+you should use the regular import statement:
+
+```swift
+import Instructions
+```
+
+However, when importing Instructions from files within `Keyboard Extension`, you should
+use the specific statement:
+
+```swift
+import InstructionsAppExtensions
+```
+
+⚠️ **Please be extremely careful**, as you will be able to import regular _Instructions_
+from within an app extension without breaking anything. It will work. However, you're at a
+high risk of rejection from the Apple Store. Uses of `UIApplication.sharedApplication()`
+are statically checked during compilation but nothing prevents you from performing the calls
+at runtime. Fortunately Xcode should warn you if you've mistakenly linked with a framework
+not suited for App Extensions.
 
 ## License
 

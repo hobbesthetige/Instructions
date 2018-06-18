@@ -1,15 +1,19 @@
-Pod::Spec.new do |s|
-  s.name             = "Instructions"
-  s.version          = "0.4.0"
-  s.summary          = "Create walkthroughs and guided tours (using coach marks) in a simple way, using Swift."
-  s.homepage         = "https://github.com/ephread/Instructions"
-  s.license          = 'MIT'
-  s.author           = { "Frédéric Maquin" => "fred@ephread.com" }
-  s.source           = { :git => "https://github.com/ephread/Instructions.git", :tag => s.version.to_s }
+Pod::Spec.new do |spec|
+  spec.cocoapods_version = '>= 0.39'
 
-  s.platform     = :ios, '8.0'
-  s.requires_arc = true
+  spec.name             = "Instructions"
+  spec.version          = "1.2.0"
+  spec.summary          = "Create walkthroughs and guided tours (with coach marks) in a simple way, using Swift."
+  spec.homepage         = "https://github.com/ephread/Instructions"
+  spec.license          = 'MIT'
+  spec.author           = { "Frédéric Maquin" => "fred@ephread.com" }
+  spec.source           = { :git => "https://github.com/ephread/Instructions.git", :tag => spec.version.to_s }
 
-  s.source_files = 'Instructions', 'Source/*.swift'
-  s.resources = ["Source/*.xcassets"]
+  spec.swift_version    = '4.1'
+  spec.platform         = :ios, '9.0'
+  spec.requires_arc     = true
+
+  spec.source_files     = 'Instructions', 'Sources/**/*.swift'
+  spec.exclude_files    = '**/*+AppExtensions.swift'
+  spec.resources        = ["Sources/**/*.xcassets"]
 end
